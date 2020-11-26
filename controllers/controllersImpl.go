@@ -2,10 +2,18 @@ package controllers
 
 import (
 	"github.com/gorilla/mux"
+	"github.com/verottaa/user-module/service"
 	"net/http"
 )
 
 type controller struct {
+	service service.Service
+}
+
+func CreateController() Controller {
+	var controller = new(controller)
+	controller.service = service.GetService()
+	return controller
 }
 
 func (c controller) InitController(router *mux.Router) {
