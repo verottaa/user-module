@@ -13,8 +13,9 @@ type Reader interface {
 type Writer interface {
 	Update(user *entity.User) error
 	Store(user *entity.User) (primitive.ObjectID, error)
-	Delete(user *entity.User) error
-	DeleteAll() error
+	Delete(id primitive.ObjectID) error
+	DeleteMany(filter entity.UserFilter) (int64, error)
+	DeleteAll() (int64, error)
 }
 
 type Destroyable interface {

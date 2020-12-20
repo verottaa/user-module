@@ -34,9 +34,9 @@ func GetService() Service {
 }
 
 func createService() *service {
-	var service = new(service)
-	service.repo = repository.GetRepository()
-	return service
+	var serviceInst = new(service)
+	serviceInst.repo = repository.GetRepository()
+	return serviceInst
 }
 
 func (s service) Destroy() {
