@@ -61,10 +61,14 @@ func (s service) Store(user *entity.User) (primitive.ObjectID, error) {
 	return s.repo.Store(user)
 }
 
-func (s service) Delete(user *entity.User) error {
-	return s.repo.Delete(user)
+func (s service) Delete(id primitive.ObjectID) error {
+	return s.repo.Delete(id)
 }
 
-func (s service) DeleteAll() error {
+func (s service) DeleteMany(filter entity.UserFilter) (int64, error) {
+	return s.repo.DeleteMany(filter)
+}
+
+func (s service) DeleteAll() (int64, error) {
 	return s.repo.DeleteAll()
 }

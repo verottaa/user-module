@@ -2,7 +2,7 @@ package repository
 
 import (
 	"errors"
-	database_module "github.com/verottaa/database-module"
+	databaseModule "github.com/verottaa/database-module"
 	"github.com/verottaa/user-module/entity"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -73,11 +73,11 @@ func (r repository) Find(id primitive.ObjectID) (*entity.User, error) {
 	filter := entity.UserFilter{
 		Id: id,
 	}
-	code, bsonUser := database_module.FindOne(r.GetCollectionName(), filter)
+	code, bsonUser := databaseModule.FindOne(r.GetCollectionName(), filter)
 	switch code {
-	case database_module.FOUND:
+	case databaseModule.FOUND:
 		return decodeUserFromBson(bsonUser)
-	case database_module.ERROR:
+	case databaseModule.ERROR:
 		return nil, errors.New("unexpected error with database connection")
 	default:
 		return nil, errors.New("unexpected code")
@@ -86,9 +86,9 @@ func (r repository) Find(id primitive.ObjectID) (*entity.User, error) {
 
 func (r repository) FindAll() ([]*entity.User, error) {
 	filter := entity.UserFilter{}
-	code, bsonUsers := database_module.FindMany(r.GetCollectionName(), filter)
+	code, bsonUsers := databaseModule.FindMany(r.GetCollectionName(), filter)
 	switch code {
-	case database_module.FOUND_ANY:
+	case databaseModule.FOUND_ANY:
 		var users []*entity.User
 		for _, bsonUser := range bsonUsers {
 			user, err := decodeUserFromBson(bsonUser)
@@ -98,7 +98,7 @@ func (r repository) FindAll() ([]*entity.User, error) {
 			users = append(users, user)
 		}
 		return users, nil
-	case database_module.ERROR:
+	case databaseModule.ERROR:
 		return nil, errors.New("unexpected error with database connection")
 	default:
 		return nil, errors.New("unexpected code")
@@ -109,13 +109,13 @@ func (r repository) Update(user *entity.User) error {
 	filter:= entity.UserFilter{
 		Id: user.Id,
 	}
-	code := database_module.UpdateOne(r.GetCollectionName(), filter, user.ToUpdateObjectData())
+	code := databaseModule.UpdateOne(r.GetCollectionName(), filter, user.ToUpdateObjectData())
 	switch code {
-	case database_module.UPDATED:
+	case databaseModule.UPDATED:
 		return nil
-	case database_module.NOT_FOUND:
+	case databaseModule.NOT_FOUND:
 		return errors.New("object didn't found in database")
-	case database_module.ERROR:
+	case databaseModule.ERROR:
 		return errors.New("unexpected error with database connection")
 	default:
 		return errors.New("unexpected code")
@@ -123,10 +123,10 @@ func (r repository) Update(user *entity.User) error {
 }
 
 func (r repository) Store(user *entity.User) (primitive.ObjectID, error) {
-	user.Id = database_module.GenerateObjectID()
-	code, bsonId := database_module.PushOne(r.GetCollectionName(), user)
+	user.Id = databaseModule.GenerateObjectID()
+	code, bsonId := databaseModule.PushOne(r.GetCollectionName(), user)
 	switch code {
-	case database_module.CREATED:
+	case databaseModule.CREATED:
 		var id primitive.ObjectID
 		decodeBson(bsonId, &id)
 
@@ -134,7 +134,7 @@ func (r repository) Store(user *entity.User) (primitive.ObjectID, error) {
 			return id, nil
 		}
 		return primitive.ObjectID{}, errors.New("validation didn't pass")
-	case database_module.ERROR:
+	case databaseModule.ERROR:
 		return primitive.ObjectID{}, errors.New("unexpected error with database connection")
 	default:
 		return primitive.ObjectID{}, errors.New("unexpected code")
@@ -146,13 +146,13 @@ func (r repository) Delete(id primitive.ObjectID) error {
 	filter := entity.UserFilter{
 		Id: id,
 	}
-	code := database_module.DeleteOne(r.GetCollectionName(), filter)
+	code := databaseModule.DeleteOne(r.GetCollectionName(), filter)
 	switch code {
-	case database_module.DELETED:
+	case databaseModule.DELETED:
 		return nil
-	case database_module.NOT_FOUND:
+	case databaseModule.NOT_FOUND:
 		return errors.New("object didn't found in database")
-	case database_module.ERROR:
+	case databaseModule.ERROR:
 		return errors.New("unexpected error with database connection")
 	default:
 		return errors.New("unexpected code")
@@ -160,13 +160,13 @@ func (r repository) Delete(id primitive.ObjectID) error {
 }
 
 func (r repository) DeleteMany(filter entity.UserFilter) (int64, error) {
-	code, quantity := database_module.DeleteMany(r.GetCollectionName(), filter)
+	code, quantity := databaseModule.DeleteMany(r.GetCollectionName(), filter)
 	switch code {
-	case database_module.DELETED:
+	case databaseModule.DELETED:
 		return quantity, nil
-	case database_module.NOT_FOUND:
+	case databaseModule.NOT_FOUND:
 		return quantity, errors.New("object didn't found in database")
-	case database_module.ERROR:
+	case databaseModule.ERROR:
 		return quantity, errors.New("unexpected error with database connection")
 	default:
 		return quantity, errors.New("unexpected code")
