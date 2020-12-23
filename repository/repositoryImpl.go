@@ -39,7 +39,9 @@ func GetRepository() Repository {
 }
 
 func createRepository() *repository {
-	return new(repository)
+	repo := new(repository)
+	repo.collectionName = "users"
+	return repo
 }
 
 func (r repository) Destroy() {
